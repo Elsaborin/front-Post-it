@@ -1,42 +1,38 @@
-// register.jsx
 import { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, PanResponder, Animated } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, PanResponder, Animated, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
+import { authAPI } from '../src/api/auth';
 
 export default function SignUp() {
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [nombre, setNombre] = useState('');
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const slideAnim = useRef(new Animated.Value(0)).current;
   
-  // Crear el PanResponder para detectar gestos de deslizamiento
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        // Solo permitir deslizamiento horizontal hacia la izquierda (valores negativos de dx)
         if (gestureState.dx < 0) {
-          // Limitar el deslizamiento a un mínimo (por ejemplo, -100)
           const newValue = Math.max(gestureState.dx, -100);
           slideAnim.setValue(newValue);
         }
       },
       onPanResponderRelease: (evt, gestureState) => {
-        // Si el usuario deslizó lo suficiente hacia la izquierda
         if (gestureState.dx < -50) {
-          // Animar hasta el final antes de navegar
           Animated.timing(slideAnim, {
             toValue: -100,
             duration: 200,
             useNativeDriver: true,
           }).start(() => {
             router.push('/login');
-            // Resetear la animación después de navegar
             slideAnim.setValue(0);
           });
         } else {
-          // Si no deslizó lo suficiente, volver a la posición inicial
           Animated.spring(slideAnim, {
             toValue: 0,
             useNativeDriver: true,
@@ -46,26 +42,40 @@ export default function SignUp() {
     })
   ).current;
 
-  const handleSignUp = () => {
-    if (!correo || !password || !confirmPassword) {
-      alert('Por favor completa todos los campos');
-      return;
+  const handleSignUp = async () => {
+    try {
+      if (!correo || !password || !confirmPassword || !nombre) {
+        setError('Por favor completa todos los campos');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        setError('Las contraseñas no coinciden');
+        return;
+      }
+      
+      if (!aceptaTerminos) {
+        setError('Debes aceptar los términos y condiciones');
+        return;
+      }
+
+      setLoading(true);
+      setError('');
+      
+      await authAPI.register({
+        email: correo.toLowerCase(),
+        password,
+        nombre
+      });
+
+      // Registro exitoso, redirigir al login
+      alert('Registro exitoso');
+      setTimeout(() => router.push('/login'), 500);
+    } catch (err) {
+      setError(err.message || 'Error al registrar usuario');
+    } finally {
+      setLoading(false);
     }
-    
-    if (password !== confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
-    }
-    
-    if (!aceptaTerminos) {
-      alert('Debes aceptar los términos y condiciones');
-      return;
-    }
-    
-    // Aquí iría la lógica de registro
-    alert('Registro exitoso');
-    // Redirigir al login después del registro exitoso
-    setTimeout(() => router.push('/login'), 500);
   };
   
   return (
@@ -79,6 +89,19 @@ export default function SignUp() {
       <Text style={styles.logo}>post it!</Text>
       <Text style={styles.tagline}>Gestión y control de tus alumnos{'\n'}todo a la palma de tu mano</Text>
       
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputIcon}>👤</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre completo"
+          value={nombre}
+          onChangeText={setNombre}
+          editable={!loading}
+        />
+      </View>
+      
       <View style={styles.inputContainer}>
         <Text style={styles.inputIcon}>✉️</Text>
         <TextInput
@@ -87,6 +110,7 @@ export default function SignUp() {
           keyboardType="email-address"
           value={correo}
           onChangeText={setCorreo}
+          editable={!loading}
         />
       </View>
       
@@ -98,6 +122,7 @@ export default function SignUp() {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          editable={!loading}
         />
       </View>
       
@@ -109,6 +134,7 @@ export default function SignUp() {
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          editable={!loading}
         />
       </View>
       
@@ -116,6 +142,7 @@ export default function SignUp() {
         <TouchableOpacity 
           style={[styles.checkbox, aceptaTerminos && styles.checkboxChecked]}
           onPress={() => setAceptaTerminos(!aceptaTerminos)}
+          disabled={loading}
         >
           {aceptaTerminos && <Text style={styles.checkmark}>✓</Text>}
         </TouchableOpacity>
@@ -127,20 +154,25 @@ export default function SignUp() {
       </View>
 
       <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignUp}>
-        <Text style={styles.buttonText}>Registrar</Text>
+        style={[styles.button, loading && styles.buttonDisabled]}
+        onPress={handleSignUp}
+        disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#ffffff" />
+        ) : (
+          <Text style={styles.buttonText}>Registrar</Text>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity 
         style={styles.loginContainer}
-        onPress={() => router.push('/login')}>
+        onPress={() => router.push('/login')}
+        disabled={loading}>
         <Text style={styles.loginText}>Iniciar sesión</Text>
       </TouchableOpacity>
       
       <Text style={styles.copyright}>Todos los derechos c</Text>
       
-      {/* Indicador visual de deslizamiento */}
       <View style={styles.swipeIndicator}>
         <Text style={styles.swipeArrow}>←</Text>
         <Text style={styles.swipeText}>Desliza hacia la izquierda para iniciar sesión</Text>
@@ -231,6 +263,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
   buttonText: {
     color: '#ffffff',
     fontSize: 16,
@@ -267,4 +302,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#696999',
   },
+  errorText: {
+    color: '#ff3b30',
+    marginBottom: 15,
+    textAlign: 'center',
+  }
 });
