@@ -1,45 +1,37 @@
-// login.jsx
-import { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, PanResponder, Animated } from 'react-native';
-import { useSession } from '../ctx';
+import { useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, PanResponder, Animated, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
-
-const correo = 'usuario@ejemplo.com';
-const password = 'password123';
+import { useSession } from '../ctx';
+import { authAPI } from '../src/api/auth';
 
 export default function SignIn() {
   const { signIn } = useSession();
   const [useCorreo, setCorreo] = useState('');
   const [usePass, setPass] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const slideAnim = useRef(new Animated.Value(0)).current;
   
-  // Crear el PanResponder para detectar gestos de deslizamiento
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
-        // Solo permitir deslizamiento horizontal hacia la derecha (valores positivos de dx)
         if (gestureState.dx > 0) {
-          // Limitar el deslizamiento a un máximo (por ejemplo, 100)
           const newValue = Math.min(gestureState.dx, 100);
           slideAnim.setValue(newValue);
         }
       },
       onPanResponderRelease: (evt, gestureState) => {
-        // Si el usuario deslizó lo suficiente hacia la derecha
         if (gestureState.dx > 50) {
-          // Animar hasta el final antes de navegar
           Animated.timing(slideAnim, {
             toValue: 100,
             duration: 200,
             useNativeDriver: true,
           }).start(() => {
             router.push('/singUp');
-            // Resetear la animación después de navegar
             slideAnim.setValue(0);
           });
         } else {
-          // Si no deslizó lo suficiente, volver a la posición inicial
           Animated.spring(slideAnim, {
             toValue: 0,
             useNativeDriver: true,
@@ -49,15 +41,22 @@ export default function SignIn() {
     })
   ).current;
 
-  const handleSignIn = () => {
-    const emailLower = useCorreo.toLowerCase();
-    const passLower = usePass.toLowerCase();
+  const handleSignIn = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await authAPI.login({
+        email: useCorreo.toLowerCase(),
+        password: usePass
+      });
 
-    if (emailLower === correo && passLower === password) {
-      signIn(emailLower); 
+      signIn(response); 
       setTimeout(() => router.replace('/'), 500);
-    } else {
-      alert('Credenciales inválidas ❌');
+    } catch (err) {
+      setError(err.message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -72,6 +71,8 @@ export default function SignIn() {
       <Text style={styles.logo}>post it!</Text>
       <Text style={styles.tagline}>Gestión y control de tus alumnos{'\n'}todo a la palma de tu mano</Text>
       
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
       <View style={styles.inputContainer}>
         <Text style={styles.inputIcon}>✉️</Text>
         <TextInput
@@ -80,6 +81,7 @@ export default function SignIn() {
           keyboardType="email-address"
           value={useCorreo}
           onChangeText={setCorreo}
+          editable={!loading}
         />
       </View>
       
@@ -91,6 +93,7 @@ export default function SignIn() {
           secureTextEntry
           value={usePass}
           onChangeText={setPass}
+          editable={!loading}
         />
       </View>
       
@@ -101,20 +104,25 @@ export default function SignIn() {
       </View>
 
       <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignIn}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        style={[styles.button, loading && styles.buttonDisabled]}
+        onPress={handleSignIn}
+        disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#ffffff" />
+        ) : (
+          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity 
         style={styles.registerContainer}
-        onPress={() => router.push('/singUp')}>
+        onPress={() => router.push('/singUp')}
+        disabled={loading}>
         <Text style={styles.registerText}>Registrate</Text>
       </TouchableOpacity>
       
       <Text style={styles.copyright}>Todos los derechos c</Text>
       
-      {/* Indicador visual de deslizamiento */}
       <View style={styles.swipeIndicator}>
         <Text style={styles.swipeText}>Desliza hacia la derecha para registrarte</Text>
         <Text style={styles.swipeArrow}>→</Text>
@@ -177,6 +185,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
   buttonText: {
     color: '#ffffff',
     fontSize: 16,
@@ -213,4 +224,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#696999',
   },
+  errorText: {
+    color: '#ff3b30',
+    marginBottom: 15,
+    textAlign: 'center',
+  }
 });
