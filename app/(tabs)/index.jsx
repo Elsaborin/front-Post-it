@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, ScrollView } from 'react-native';
 import { Plus } from 'lucide-react-native';
@@ -69,6 +70,28 @@ export default function AsignaturasScreen() {
         onClose={() => setCreateModalVisible(false)}
         onSubmit={handleCreateSubject}
       />
+=======
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useSession } from "../../ctx";
+
+export default function Index() {
+  const { session, signOut } = useSession();  
+
+  return (
+    <View style={styles.container}>
+      {session && (
+        <TouchableOpacity
+          onPress={signOut}
+          style={styles.signOutButton}
+        >
+          <Text style={styles.buttonText}>Cerrar Sesión</Text>
+        </TouchableOpacity>
+      )}
+
+      <Text style={styles.title}>
+        {session ? `Bienvenido, ${session.correo}` : "Auth App"}
+      </Text>
+>>>>>>> d27f8450c21960b93bcac5f322f26ad63666e1cf
     </View>
   );
 }
@@ -76,6 +99,7 @@ export default function AsignaturasScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+<<<<<<< HEAD
     backgroundColor: '#fff',
   },
   content: {
@@ -100,3 +124,29 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+=======
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 20,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  signOutButton: {
+    position: 'absolute',
+    top: 10,
+    right: 0,
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
+>>>>>>> d27f8450c21960b93bcac5f322f26ad63666e1cf

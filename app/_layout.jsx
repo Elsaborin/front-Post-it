@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { SessionProvider } from '../context/session';
@@ -36,3 +37,15 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+=======
+import { Slot } from 'expo-router';
+import { SessionProvider } from '../ctx';
+
+export default function Root() {
+  return (
+    <SessionProvider>
+      <Slot />
+    </SessionProvider>
+  );
+}
+>>>>>>> d27f8450c21960b93bcac5f322f26ad63666e1cf
