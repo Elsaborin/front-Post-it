@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Tabs } from 'expo-router';
 import { Star, Users, FileText } from 'lucide-react-native';
 import { Platform } from 'react-native';
@@ -75,26 +74,3 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
-=======
-import { Text } from 'react-native';
-import { Redirect, Stack } from 'expo-router';
-import { useSession } from '../../ctx'; 
-
-export default function AppLayout() {
-  const { session, isLoading, isSignUp } = useSession(); 
-
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
-  if (!session && isSignUp) {
-    return <Redirect href="/signUp" />;
-  }
-
-  if (!session) {
-    return <Redirect href="/login" />;
-  }
-
-  return <Stack />;
-}
->>>>>>> d27f8450c21960b93bcac5f322f26ad63666e1cf

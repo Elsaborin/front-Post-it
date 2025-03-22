@@ -9,47 +9,29 @@
     "web": "expo start --web"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@expo-google-fonts/righteous": "^0.2.3",
     "expo": "~52.0.37",
     "expo-constants": "~17.0.7",
     "expo-font": "~13.0.4",
-=======
-    "@expo-google-fonts/righteous": "^0.2.3",
-    "axios": "^1.8.3",
-    "expo": "~52.0.37",
-    "expo-constants": "~17.0.7",
-    "expo-font": "^13.0.4",
->>>>>>> d27f8450c21960b93bcac5f322f26ad63666e1cf
     "expo-linking": "~7.0.5",
     "expo-router": "~4.0.17",
     "expo-secure-store": "~14.0.1",
     "expo-splash-screen": "^0.29.22",
     "expo-status-bar": "~2.0.1",
-<<<<<<< HEAD
     "lucide-react-native": "^0.363.0",
     "react": "18.3.1",
     "react-native": "0.76.7",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-reanimated": "~3.8.0",
-=======
-    "react": "18.3.1",
-    "react-native": "0.76.7",
-    "react-native-gesture-handler": "^2.24.0",
->>>>>>> d27f8450c21960b93bcac5f322f26ad63666e1cf
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "@babel/core": "^7.20.0",
     "@types/react": "~18.3.12",
     "typescript": "^5.3.3"
-=======
-    "@babel/core": "^7.20.0"
->>>>>>> d27f8450c21960b93bcac5f322f26ad63666e1cf
   },
   "private": true
 }
