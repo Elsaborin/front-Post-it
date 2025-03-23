@@ -8,8 +8,8 @@ export default function CreateSubjectModal({ visible, onClose, onSubmit }) {
   const [description, setDescription] = useState('');
 
   const handleSubmit = () => {
-    if (!subjectTitle.trim() || !groupTitle.trim()) {
-      alert('Por favor completa todos los campos requeridos');
+    if (!subjectTitle.trim()) {
+      alert('Por favor ingresa un título para la asignatura');
       return;
     }
     onSubmit({
@@ -48,7 +48,7 @@ export default function CreateSubjectModal({ visible, onClose, onSubmit }) {
             />
           </View>
 
-          <Text style={styles.sectionTitle}>Primer grupo</Text>
+          <Text style={styles.sectionTitle}>Grupo inicial (opcional)</Text>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Título del grupo</Text>

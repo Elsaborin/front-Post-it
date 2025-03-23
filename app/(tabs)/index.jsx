@@ -5,22 +5,29 @@ import { router } from 'expo-router';
 import Header from '../../components/Header';
 import CreateSubjectModal from '../../components/CreateSubjectModal';
 import SubjectCard from '../../components/SubjectCard';
+import { useSubjects } from '../../context/SubjectsContext';
 
 export default function AsignaturasScreen() {
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
-  const [subjects, setSubjects] = useState([]);
+  const { subjects, addSubject, addGroupToSubject } = useSubjects();
 
   const handleCreateSubject = (data) => {
     const newSubject = {
       id: Date.now().toString(),
       title: data.subject,
-      groups: [{
-        id: Date.now().toString() + '-initial',
-        title: data.group,
-        description: data.description
-      }]
+      groups: []
     };
-    setSubjects([...subjects, newSubject]);
+    addSubject(newSubject);
+
+    if (data.group.trim() !== '') {
+      const initialGroup = {
+        id: Date.now().toString(),
+        title: data.group,
+        description: data.description || ''
+      };
+      addGroupToSubject(newSubject.id, initialGroup);
+    }
+
     setCreateModalVisible(false);
   };
 
@@ -33,8 +40,7 @@ export default function AsignaturasScreen() {
       pathname: '/subject/[id]',
       params: { 
         id: subject.id, 
-        title: subject.title,
-        initialGroups: JSON.stringify(subject.groups)
+        title: subject.title
       }
     });
   };

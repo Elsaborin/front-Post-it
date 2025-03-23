@@ -1,38 +1,20 @@
-import { useEffect } from 'react';
-import { Stack } from 'expo-router';
-import { SessionProvider } from '../context/session';
-import { useFonts, Righteous_400Regular } from '@expo-google-fonts/righteous';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import * as SplashScreen from 'expo-splash-screen';
-
-SplashScreen.preventAutoHideAsync();
+import { View } from "react-native";
+import { Stack } from "expo-router";
+import { SessionProvider } from "../context/session";
+import { SubjectsProvider } from "../context/SubjectsContext"; // 👈 Nueva importación
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
-    'Righteous': Righteous_400Regular,
-  });
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <SubjectsProvider> {/* 👈 Envuelve con el provider */}
       <SessionProvider>
-        <Stack 
-          screenOptions={{
-            headerShown: false,
-            presentation: 'card',
-            animation: 'default',
-          }}
-        />
+        <View style={{ flex: 1 }}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="login" />
+            <Stack.Screen name="singUp" />
+          </Stack>
+        </View>
       </SessionProvider>
-    </GestureHandlerRootView>
+    </SubjectsProvider>
   );
 }

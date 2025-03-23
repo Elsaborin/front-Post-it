@@ -1,26 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Plus, ChevronLeft } from 'lucide-react-native';
 import Header from '../../components/Header';
 import GroupCard from '../../components/GroupCard';
 import CreateGroupModal from '../../components/CreateGroupModal';
+import { useSubjects } from '../../context/SubjectsContext';
 
 export default function SubjectScreen() {
-  const { id, title, initialGroups } = useLocalSearchParams();
+  const { id, title } = useLocalSearchParams();
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
-  const [groups, setGroups] = useState([]);
+  const { subjects, addGroupToSubject } = useSubjects();
 
-  useEffect(() => {
-    if (initialGroups) {
-      try {
-        const parsedGroups = JSON.parse(initialGroups);
-        setGroups(parsedGroups);
-      } catch (error) {
-        console.error('Error parsing initial groups:', error);
-      }
-    }
-  }, [initialGroups]);
+  const groups = subjects.find(subject => subject.id === id)?.groups || [];
 
   const handleCreateGroup = (data) => {
     const newGroup = {
@@ -28,7 +20,7 @@ export default function SubjectScreen() {
       title: data.title,
       description: data.description,
     };
-    setGroups([...groups, newGroup]);
+    addGroupToSubject(id, newGroup);
     setCreateModalVisible(false);
   };
 
