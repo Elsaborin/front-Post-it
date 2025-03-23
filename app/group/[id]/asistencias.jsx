@@ -1,75 +1,34 @@
-// asistencias.jsx
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { UserCheck, UserX, Clock, User } from 'lucide-react-native';
+import Header from '../../../components/Header';
+import { ChevronLeft } from 'lucide-react-native';
 
 export default function AsistenciasScreen() {
   const { id } = useLocalSearchParams();
 
-  // Colores exactos proporcionados
-  const colors = {
-    present: '#53B668',  // Verde
-    absent: '#DD6565',   // Rojo
-    late: '#F0AD4E'      // Naranja
-  };
-
-  // Datos de asistencia
+  // Datos de ejemplo
   const attendanceData = [
-    { student: 'Hernández Primo Julián', attendance: '100%', status: 'present', color: colors.present },
-    { student: 'Hernández Primo Julián', attendance: '92%', status: 'absent', color: colors.absent },
-    { student: 'Hernández Primo Julián', attendance: '100%', status: 'absent', color: colors.absent },
-    { student: 'Hernández Primo Julián', attendance: '100%', status: 'late', color: colors.late }
+    { student: 'Estudiante 1', attendance: '100%', color: '#2ecc71' },
+    { student: 'Estudiante 2', attendance: '85%', color: '#f1c40f' }
   ];
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.logoText}>post it!</Text>
-        <Text style={styles.headerSubtitle}>Asignatura I Grupo</Text>
-      </View>
-
-      <View style={styles.statsContainer}>
-        <View style={styles.statBox}>
-          <View style={styles.iconContainer}>
-            <UserCheck size={24} color="#333" />
-          </View>
-          <View style={[styles.statNumberContainer, { backgroundColor: colors.present }]}>
-            <Text style={styles.statNumber}>20</Text>
-          </View>
+      <Header title="Asistencias">
+        <View style={styles.headerContent}>
+          <ChevronLeft size={24} color="#696999" />
+          <Text style={styles.headerTitle}>Grupo {id}</Text>
         </View>
-        
-        <View style={styles.statBox}>
-          <View style={styles.iconContainer}>
-            <UserX size={24} color="#333" />
-          </View>
-          <View style={[styles.statNumberContainer, { backgroundColor: colors.absent }]}>
-            <Text style={styles.statNumber}>3</Text>
-          </View>
-        </View>
+      </Header>
 
-        <View style={styles.statBox}>
-          <View style={styles.iconContainer}>
-            <Clock size={24} color="#333" />
-          </View>
-          <View style={[styles.statNumberContainer, { backgroundColor: colors.late }]}>
-            <Text style={styles.statNumber}>1</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderText}>Alumno</Text>
-        <Text style={styles.tableHeaderText}>Porcentaje</Text>
-      </View>
-
-      <ScrollView style={styles.tableContainer}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {attendanceData.map((data, index) => (
-          <View key={index} style={[styles.tableRow, { backgroundColor: data.color }]}>
+          <View 
+            key={index} 
+            style={[styles.attendanceCard, { backgroundColor: data.color }]}
+          >
             <Text style={styles.studentName}>{data.student}</Text>
-            <View style={styles.attendanceContainer}>
-              <Text style={styles.attendanceLabel}>Asistencias:</Text>
-              <Text style={styles.attendancePercentage}>{data.attendance}</Text>
-            </View>
+            <Text style={styles.attendanceText}>{data.attendance}</Text>
           </View>
         ))}
       </ScrollView>
@@ -80,98 +39,38 @@ export default function AsistenciasScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f5f5f5'
   },
-  header: {
-    paddingTop: 40,
-    paddingHorizontal: 20,
-    paddingBottom: 5,
-  },
-  logoText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    fontFamily: 'Righteous-Regular',
-    letterSpacing: 0.5,
-    color: '#000',
-    marginBottom: 2,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#333',
-    fontFamily: 'Righteous-Regular',
-  },
-  statsContainer: {
+  headerContent: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingHorizontal: 20,
-    marginTop: 15,
-    marginBottom: 5,
-  },
-  statBox: {
-    width: '30%',
-  },
-  iconContainer: {
     alignItems: 'center',
-    marginBottom: 5,
+    gap: 10
   },
-  statNumberContainer: {
-    borderRadius: 4,
-    padding: 8,
-    alignItems: 'center',
+  headerTitle: {
+    fontSize: 20,
+    color: '#696999',
+    fontWeight: '600'
   },
-  statNumber: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'Righteous-Regular',
+  scrollContent: {
+    padding: 20,
+    gap: 15
   },
-  tableHeader: {
+  attendanceCard: {
+    padding: 20,
+    borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: 15,
-    marginBottom: 5,
-  },
-  tableHeaderText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    fontFamily: 'Righteous-Regular',
-  },
-  tableContainer: {
-    flex: 1,
-    paddingHorizontal: 10,
-    marginTop: 5,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderRadius: 8,
-    padding: 14,
-    marginBottom: 6,
-    marginHorizontal: 10,
     alignItems: 'center',
+    elevation: 2
   },
   studentName: {
-    fontSize: 14,
     color: 'white',
-    flex: 1,
-    fontFamily: 'Righteous-Regular',
+    fontSize: 16,
+    fontWeight: '500'
   },
-  attendanceContainer: {
-    alignItems: 'flex-end',
-  },
-  attendanceLabel: {
-    fontSize: 10,
+  attendanceText: {
     color: 'white',
-    opacity: 0.9,
-    fontFamily: 'Righteous-Regular',
-    marginBottom: -2,
-  },
-  attendancePercentage: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-    fontFamily: 'Righteous-Regular',
+    fontSize: 20,
+    fontWeight: '700'
   }
 });

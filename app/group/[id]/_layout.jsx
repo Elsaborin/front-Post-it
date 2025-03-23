@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router";
+import { StyleSheet, Platform } from "react-native";
 import { FileText, Star, Users } from "lucide-react-native";
-import { Platform, StyleSheet } from "react-native";
 
-export default function GroupTabsLayout() {
+export default function GroupLayout() {
   return (
     <Tabs
       screenOptions={{

@@ -25,15 +25,19 @@ export default function SubjectScreen() {
   };
 
   const handleGroupPress = (group) => {
-    router.push({
-      pathname: '/group/[id]',
-      params: { 
-        id: group.id, 
-        title: group.title,
-        subjectId: id,
-        subjectTitle: title
-      }
-    });
+    if (!group.weights?.length) {
+      router.push(`/group/${group.id}/configurar-ponderaciones`);
+    } else {
+      router.push({
+        pathname: '/group/[id]',
+        params: { 
+          id: group.id,
+          title: group.title,
+          subjectId: id,
+          subjectTitle: title
+        }
+      });
+    }
   };
 
   return (
@@ -50,7 +54,7 @@ export default function SubjectScreen() {
 
       <Text style={styles.subtitle}>Tus grupos</Text>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {groups.map(group => (
           <GroupCard
             key={group.id}
@@ -92,15 +96,14 @@ const styles = StyleSheet.create({
     color: '#696999',
     fontSize: 16,
     marginLeft: 4,
+    fontFamily: 'Righteous-Regular',
   },
   subtitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginHorizontal: 20,
     marginBottom: 16,
-  },
-  content: {
-    flex: 1,
+    fontFamily: 'Righteous-Regular',
   },
   scrollContent: {
     padding: 20,
@@ -119,5 +122,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '500',
+    fontFamily: 'Righteous-Regular',
   },
 });
