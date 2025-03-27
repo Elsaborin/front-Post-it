@@ -4,8 +4,6 @@ import { router } from 'expo-router';
 import { useSession } from '../context/session';
 import { Mail, Lock, ChevronRight } from 'lucide-react-native';
 
-const correo = 'usuario@ejemplo.com';
-const password = 'password123';
 
 export default function SignIn() {
   const { signIn } = useSession();

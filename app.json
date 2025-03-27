@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "https://raw.githubusercontent.com/expo/expo/master/templates/expo-template-blank/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.elsaborin.myAuth"
     },
     "web": {
       "favicon": "https://raw.githubusercontent.com/expo/expo/master/templates/expo-template-blank/assets/favicon.png"
@@ -28,6 +29,14 @@
       "expo-router",
       "expo-secure-store",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6278d3d1-2f1a-4a4f-8516-9897a273368b"
+      }
+    }
   }
 }
